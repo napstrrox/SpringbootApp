@@ -10,7 +10,7 @@ Returns the nth Fibonacci number.
 Implementation Notes Returns the nth number in the Fibonacci sequence
 
 Request URL 
-https://<developer to provide>/api/Fibonacci?n=10
+https:/<developer to provide>/api/Fibonacci?n=10
 
 
 2. ReverseWords  
