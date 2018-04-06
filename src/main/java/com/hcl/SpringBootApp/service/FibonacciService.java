@@ -1,29 +1,17 @@
 package com.hcl.SpringBootApp.service;
 
 import org.springframework.stereotype.Component;
-
-import com.hcl.SpringBootApp.model.FibonacciOutput;
-
-
 @Component
-public class FibonacciService{
-	
-	public FibonacciOutput fibonacci(Object num){
-		FibonacciOutput output = new FibonacciOutput();
-		long a = 0, b = 1, c;
-		if(num instanceof Long) {
-			Long newNum=new Long((long) num);
-			if(num.equals(0)){
-				throw new IllegalArgumentException ("Wrong input: " + newNum);
-			}
-			for(long i = 2; i <= newNum; i++) {
-				c = a+b;
-				a = b;
-				b = c;
-			}
-			output.setNumber(b);
-			return output;
+public class FibonacciService {
+	public Long getNthfibonacciNumber(Object num) 
+	{
+		Long newNum = Long.parseLong(num.toString());
+		long num1 = 0, num2 = 1, num3;
+		for (long i = 2; i <= newNum; i++) {
+			num3 = num1 + num2;
+			num1 = num2;
+			num2 = num3;
 		}
-		throw new NumberFormatException("Wrong input Parameter");
+		return num2;
 	}
 }
