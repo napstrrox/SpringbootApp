@@ -25,12 +25,17 @@ public class FibonacciController {
 	@RequestMapping(value="/Fibonacci", method=RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> fibonacci(@RequestParam(value="n") long num) {
-		long number = Long.valueOf(num);
-		FibonacciOutput output = new FibonacciOutput();
-		output= fibonacciService.fibonacci(number);
-		return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.noCache()).header("Pragma", "no-cache").body(output);
+	public ResponseEntity<?> fibonacci(@RequestParam(value = "n") Object num) {
+
+		try {
+			long number = new Long(num.toString());
+			FibonacciOutput output;
+			return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache())
+					.header("Pragma", "no-cache").body(fibonacciService.fibonacci(number));
+		} 
+		catch (Exception e) 
+		{
+			throw new NumberFormatException("Invalid Input Type.");
+		}
 	}
-	
 }
