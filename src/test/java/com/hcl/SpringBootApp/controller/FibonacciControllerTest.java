@@ -1,24 +1,21 @@
 package com.hcl.SpringBootApp.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Before;
+import java.security.InvalidParameterException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.hcl.SpringBootApp.controller.FibonacciController;
-import com.hcl.SpringBootApp.service.FibonacciService;
+import com.hcl.SpringBootApp.exceptionHandler.InvalidRequestException;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,41 +24,51 @@ import com.hcl.SpringBootApp.service.FibonacciService;
 public class FibonacciControllerTest {
 
 	@Autowired
-	private MockMvc mockMvc;
-
-	@Mock
-	private FibonacciController controller;
-
-	@InjectMocks
-	private FibonacciService fibonnaciService;
-
-	@Before
-	public void setUp() throws Exception {
-		mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-	}
-
-	private String num = "10";
-
-	@Test(expected=NumberFormatException.class)
-	public void testFibonacciNumberSuccess() 
-	{
-		assertEquals(55, fibonnaciService.fibonacci(10));
-	}
-
-	@Test(expected=NumberFormatException.class)
-	public void testFibonacciNumberFails()
-	{
-		assertNotEquals(122, fibonnaciService.fibonacci(10));
-	}
-
+	FibonacciController itsFibonacciControllerTest;
+	
+	@Autowired 
+	private MockMvc itsMockMvc;
+	
+	private long num = 10;
+	
 	@Test
-	public void testSuccessfulfibonacci() throws Exception {
-		mockMvc.perform(get("/api/Fibonacci").param("n", num)).andExpect(status().is(200));
+    public void testSuccessStatusOkForValidInput() throws Exception {
+       
+		itsFibonacciControllerTest.getNthFibonacciNumber(num)
+		.getStatusCode().compareTo(HttpStatus.OK);
 	}
-
+	
+	@Test(expected=InvalidParameterException.class)
+    public void testFailsIfInputStringType() throws Exception {
+		itsFibonacciControllerTest.getNthFibonacciNumber(new String("abc"));
+	}
+	
 	@Test
-	public void testFailsIfInvalid() throws Exception {
-		mockMvc.perform(get("/api/Fibonacci").param("abc", "num")).andExpect(status().is(400));
+    public void testNthSequenceSuccrss() throws Exception {
+       itsMockMvc
+            .perform(get("/api/Fibonacci").param("n", "10"))
+            .andExpect(status().isOk())
+            .andExpect(content().json("55"));
 	}
-
+	
+	@Test(expected=Exception.class)
+    public void testFailsIFInvalidTypeInput() throws Exception {
+       itsMockMvc
+            .perform(get("/api/Fibonacci").param("n", "abc"))
+            .andExpect(status().is(400));
+	}
+	
+	@Test(expected=Exception.class)
+    public void testFailsIfNegativeInput() throws Exception {
+       itsMockMvc
+            .perform(get("/api/Fibonacci").param("n", "-1"))
+            .andExpect(status().is(400));
+	}
+	
+	@Test(expected=Exception.class)
+    public void testFailsIfInvalidInputObject() throws Exception {
+       itsMockMvc
+            .perform(get("/api/Fibonacci").param("n", new String("abc")))
+            .andExpect(status().is(400));
+	}
 }

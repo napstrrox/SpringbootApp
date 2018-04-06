@@ -1,58 +1,63 @@
 package com.hcl.SpringBootApp.controller;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.in;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Before;
+import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.hcl.SpringBootApp.controller.ReverseWordController;
-import com.hcl.SpringBootApp.service.ReverseWordService;
+import com.hcl.SpringBootApp.exceptionHandler.InvalidRequestException;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ReverseWordsControllerTest {
-
-private String sentence = "How are you";
 	
 	@Autowired
-	private MockMvc mockMvc;
+	MockMvc itsMockMvc;
 	
-	@Mock
-	private ReverseWordController reverseWordsController;
+	@Autowired
+	ReverseWordController itsReverseWordControllerTest;
 	
-	@InjectMocks
-	private ReverseWordService reverseWordsService;
-	
-	@Before
-    public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(reverseWordsController)
-                .build();
-    }
+	private final String itsInputString = "How Are You";
 	
 	@Test
-	public void testSuccessfulWordsReversal() throws Exception {
-		mockMvc.perform(get("/api/ReverseWords").param("sentence", sentence))
-		.andExpect(status().isOk());
+	public void testSuccessStatusOkForValidInput() 
+	{
+		itsReverseWordControllerTest.getReverseWords(itsInputString)
+		.getStatusCode().compareTo(HttpStatus.OK);
+	}
+	
+	@Test(expected=JSONException.class)
+	public void testSuccessForValidInputString() throws Exception
+	{
+		itsMockMvc
+         .perform(get("/api/ReverseWords").param("sentence",itsInputString))
+         .andExpect(status().isOk())
+         .andExpect(content().json("woh era uoy"));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+    public void testFailsIfInputnull() throws Exception {
+       itsMockMvc
+            .perform(get("/api/ReverseWords").param("sentence",null))
+            .andExpect(status().is(400));
 	}
 	
 	@Test
-	public void testFailureScenario() throws Exception {
-		assertNotEquals("test",reverseWordsService.reverseWord(sentence));
+    public void testFailsIfInputEmpty() throws Exception {
+       itsMockMvc
+            .perform(get("/api/ReverseWords").param("sentence",""))
+            .andExpect(status().is(400));
 	}
 	
 }
