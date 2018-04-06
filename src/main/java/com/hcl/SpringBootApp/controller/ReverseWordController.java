@@ -11,23 +11,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcl.SpringBootApp.model.Message;
+import com.hcl.SpringBootApp.exception.InvalidRequestException;
 import com.hcl.SpringBootApp.service.ReverseWordService;
 
 @RestController
 @RequestMapping("/api")
 public class ReverseWordController {
-	
+
 	@Autowired
 	ReverseWordService service;
 
-	@RequestMapping(value="/ReverseWords", method=RequestMethod.GET)
+	@RequestMapping(value = "/ReverseWords", method = RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> reverseWords(@RequestParam(value="sentence") String sentence) {
-		Message greeting=new Message();
-		greeting=service.reverseWord(sentence);
-		return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.noCache()).header("Pragma", "no-cache").body(greeting);
+	public ResponseEntity<Object> getReverseWords(@RequestParam String sentence) {
+		if (sentence==null||sentence.isEmpty()) {
+			throw new InvalidRequestException("Input is null or Empty.");
+		}
+		return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache()).header("Pragma", "no-cache")
+				.body(ReverseWordService.getReverseWord(sentence));
 	}
 }
