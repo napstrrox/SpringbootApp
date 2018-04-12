@@ -19,13 +19,13 @@ public class MakeOneArrayService {
 		Integer[] aray1 = makeOneArray.getArray1();
 		Integer[] aray2 = makeOneArray.getArray2();
 		Integer[] aray3 = makeOneArray.getArray3();
-		List<Integer> value = merge(aray1, aray2, aray3);
+		List<Integer> value = mergeAndSort(aray1, aray2, aray3);
 		MakeOneArrayResponse response = new MakeOneArrayResponse();
 		response.setArray(value.toArray(new Integer[value.size()]));
 		return response;
 	}
 
-	private static List<Integer> merge(Integer[]... arrays) {
+	private static List<Integer> mergeAndSort(Integer[]... arrays) {
 		List<Integer> result = new ArrayList<>();
 		for (Integer[] array : arrays) {
 			Collections.addAll(result, array);
@@ -35,5 +35,4 @@ public class MakeOneArrayService {
 		Set<Integer> sortedSet = new TreeSet<>(list);
 		return sortedSet.stream().collect(Collectors.toList());
 	}
-
 }
