@@ -34,4 +34,11 @@ public class MakeOneArray {
 	public void setArray3(Integer[] array3) {
 		this.array3 = array3;
 	}
+
+	@Override
+	public String toString() {
+		return "MakeOneArray [array1=" + Arrays.toString(array1) + ", array2=" + Arrays.toString(array2) + ", array3="
+				+ Arrays.toString(array3) + "]";
+	}
+	
 }
