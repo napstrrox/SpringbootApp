@@ -30,3 +30,20 @@ Implementation Notes Returns the type of triangle given the lengths of its sides
 
 Request URL 
 https://localhost:7070/api/TriangleType?a=1&b=1&c=1 
+
+
+4. Make one array 
+ 
+POST /api/makeonearray 
+Accepts JSON objects with multiple number arrays. Combine these arrays, removes duplicate numbers and sorts them. 
+Response is JSON object which contains this combined sorted array. 
+
+Request URL 
+http://localhost:7070/api/makeonearray
+{
+"array1":[1,2,3,4], 
+"array2":[3,4,5,6], 
+"array3":[6,1,3,11]
+}
+
+
